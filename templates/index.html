@@ -1,0 +1,425 @@
+ {% extends "base.html" %}
+ {% block  content%}
+
+    <!-- Brand Header -->
+
+    <section class="relative bg-gradient-to-r from-darkmagenta to-magenta text-white py-16 px-4 text-center overflow-hidden">
+        <!-- Background Overlay Image -->
+        <div class="absolute inset-0 opacity-20 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1516979187457-637abb4f9353?q=80&w=1200&auto=format&fit=crop');"></div>
+        <div class="relative max-w-4xl mx-auto">
+            <span class="bg-orangered text-white text-xs uppercase font-extrabold tracking-widest px-3 py-1 sharp-border">Elimu Ni Tunu</span>
+            <h2 class="font-poppins font-extrabold text-4xl md:text-5xl mt-4 mb-3 tracking-tight">The Literary & Education Blog</h2>
+            <p class="text-lg md:text-xl text-purple-100 max-w-2xl mx-auto font-light">
+                Discover modern learning insights, creative writing advice, and local perspectives on CBC updates directly from TUNU authors.
+            </p>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto px-4 py-10">
+        
+        <!-- Breadcrumbs & Category Bar -->
+        <div class="flex flex-wrap justify-between items-center gap-4 mb-8 border-b border-gray-200 pb-5">
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+                <a href="/" class="hover:text-magenta transition-colors">Home</a>
+                <i class="fas fa-chevron-right text-xs"></i>
+                {% if post %}
+                    <a href="/blog" class="hover:text-magenta transition-colors">Blog Feed</a>
+                    <i class="fas fa-chevron-right text-xs"></i>
+                    <span class="text-gray-800 font-semibold truncate max-w-xs">{{ post.title }}</span>
+                {% else %}
+                    <span class="text-gray-800 font-semibold">Blog Feed</span>
+                {% endif %}
+            </div>
+            
+            {% if not post %}
+            <!-- Category Filtering Bubbles -->
+            <div class="flex flex-wrap items-center gap-2" id="category-selector-bar">
+                <button onclick="filterCategory('all')" id="cat-btn-all" class="px-4 py-1.5 text-xs font-bold uppercase tracking-wider bg-magenta text-white sharp-border shadow-sm">All Posts</button>
+                <button onclick="filterCategory('CBC Education')" id="cat-btn-cbc" class="px-4 py-1.5 text-xs font-bold uppercase tracking-wider bg-white border border-gray-300 text-gray-700 hover:border-magenta sharp-border transition-colors">CBC Education</button>
+                <button onclick="filterCategory('Creative Writing')" id="cat-btn-creative" class="px-4 py-1.5 text-xs font-bold uppercase tracking-wider bg-white border border-gray-300 text-gray-700 hover:border-magenta sharp-border transition-colors">Creative Readers</button>
+                <button onclick="filterCategory('Publishing')" id="cat-btn-pub" class="px-4 py-1.5 text-xs font-bold uppercase tracking-wider bg-white border border-gray-300 text-gray-700 hover:border-magenta sharp-border transition-colors">Publishing</button>
+                <button onclick="filterCategory('Revision')" id="cat-btn-rev" class="px-4 py-1.5 text-xs font-bold uppercase tracking-wider bg-white border border-gray-300 text-gray-700 hover:border-magenta sharp-border transition-colors">Revision Strategy</button>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2 space-y-6" id="blog-content-panel">
+                
+                {% if post %}
+                <article class="bg-white border border-gray-200 shadow-sm sharp-border overflow-hidden">
+                    <!-- Header Banner Image -->
+                    <img src="{{ post.cover_image or 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&q=80&w=1000' }}" alt="{{ post.title }}" class="w-full h-[350px] object-cover">
+                    
+                    <div class="p-8">
+                        <!-- Article meta info -->
+                        <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500 mb-4">
+                            <span class="bg-orangered text-white px-2 py-1 uppercase font-bold tracking-wider text-[10px] sharp-border-sm">{{ post.category or 'Publishing' }}</span>
+                            <span class="flex items-center gap-1"><i class="far fa-calendar"></i> {{ post.created_at.strftime('%B %d, %Y') }}</span>
+                            <span class="flex items-center gap-1"><i class="far fa-user"></i> By {{ post.author.username }}</span>
+                            <span class="flex items-center gap-1"><i class="far fa-eye"></i> {{ post.views or 0 }} Views</span>
+                        </div>
+
+                        <h2 class="font-poppins font-extrabold text-3xl text-darkmagenta mb-6 leading-tight">{{ post.title }}</h2>
+                        
+                        <!-- Detailed Text Content block -->
+                        <div class="prose max-w-none text-gray-700 leading-relaxed mb-8">
+                            {{ post.content | safe }}
+                        </div>
+
+                        <!-- Social Action Bar -->
+                        <div class="flex items-center justify-between border-t border-b border-gray-100 py-4 mb-8">
+                            <div class="flex items-center gap-6">
+                                <a href="/like/{{ post.id }}" class="flex items-center gap-2 text-sm text-gray-500 hover:text-orangered focus:outline-none transition-colors">
+                                    <i class="far fa-heart text-lg"></i>
+                                    <span>{{ post.likes_count or 0 }} Likes</span>
+                                </a>
+                                <span class="text-sm text-gray-500 flex items-center gap-2">
+                                    <i class="far fa-comment text-lg text-gray-400"></i>
+                                    <span>{{ comments | length }} Comments</span>
+                                </span>
+                                <a href="/bookmark/{{ post.id }}" class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-magenta transition-colors">
+                                    <i class="far fa-bookmark text-lg"></i>
+                                    <span>Bookmark</span>
+                                </a>
+                            </div>
+                            <button onclick="copyShareLink('{{ post.id }}')" class="bg-gray-100 hover:bg-magenta hover:text-white text-gray-700 px-4 py-2 text-xs font-bold uppercase flex items-center gap-1 sharp-border transition-colors">
+                                <i class="fas fa-share-alt"></i> Share This
+                            </button>
+                        </div>
+
+                        <!-- Author Info card -->
+                        <div class="bg-gray-50 p-6 border-l-4 border-magenta mb-8 sharp-border">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-magenta text-white flex items-center justify-center font-bold font-poppins text-lg sharp-border">
+                                    {{ post.author.username[0] | upper if post.author.username else 'T' }}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold font-poppins text-darkmagenta">{{ post.author.username }}</h4>
+                                    <p class="text-xs text-gray-600 mt-1 leading-relaxed">{{ post.author.bio or 'TUNU Author contributing to the growth of cultural literature and modern educational materials.' }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-10">
+                            <h3 class="font-poppins font-bold text-xl text-gray-800 mb-6 border-b pb-2 flex items-center gap-2">
+                                <i class="far fa-comments text-magenta"></i> Discussion Desk ({{ comments | length }})
+                            </h3>
+                            
+                            <!-- Comments dynamic feed -->
+                            <div class="space-y-4 mb-8">
+                                {% for comment in comments %}
+                                    <div class="bg-gray-50 p-4 border border-gray-100 sharp-border">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="font-bold text-sm text-darkmagenta">{{ comment.user.username }}</span>
+                                            <span class="text-[10px] text-gray-400">{{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                                        </div>
+                                        <p class="text-sm text-gray-600 leading-relaxed">{{ comment.content }}</p>
+                                    </div>
+                                {% else %}
+                                    <p class="text-gray-400 italic text-sm">No comments submitted yet. Join the conversation first!</p>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Comment Input Form -->
+                            <div class="bg-gray-50 p-6 border border-gray-200 sharp-border">
+                                <h4 class="font-bold text-sm uppercase text-gray-700 tracking-wider mb-4">Post an opinion</h4>
+                                {% if session.get('uid') %}
+                                <form action="/comment/{{ post.id }}" method="POST" class="space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-600 mb-1">Your Comment *</label>
+                                        <textarea name="content" rows="4" class="w-full text-sm px-4 py-2 border border-gray-300 bg-white outline-none focus:border-magenta sharp-border" placeholder="Share your constructive critique or feedback..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="bg-magenta hover:bg-darkmagenta text-white font-bold px-6 py-2.5 text-xs uppercase tracking-wider transition-colors sharp-border">
+                                        Submit Opinion
+                                    </button>
+                                </form>
+                                {% else %}
+                                <div class="text-center py-4 text-sm text-gray-500">
+                                    Please <a href="/login" class="text-magenta font-semibold hover:underline">Login</a> to write a comment on the discussion board.
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                
+                {% else %}
+                
+                <div class="space-y-6" id="post-cards-deck">
+                    {% for post in posts %}
+                        <div class="blog-post-card bg-white border border-gray-200 hover:border-magenta shadow-sm transition-all duration-300 flex flex-col md:flex-row overflow-hidden sharp-border group" 
+                             data-category="{{ post.category or 'Publishing' }}"
+                             data-title="{{ post.title | lower }}"
+                             data-summary="{{ post.summary | lower }}">
+                            <!-- Thumbnail wrapper -->
+                            <div class="md:w-[220px] md:min-w-[220px] h-[220px] overflow-hidden relative bg-gray-100">
+                                <img src="{{ post.cover_image or 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&q=80&w=1000' }}" alt="{{ post.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <span class="absolute top-3 left-3 bg-magenta text-white text-[10px] uppercase font-bold px-2 py-0.5 sharp-border-sm tracking-wider">
+                                    {{ post.category or 'Publishing' }}
+                                </span>
+                            </div>
+
+                            <!-- Card details panel -->
+                            <div class="p-6 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center gap-3 text-[11px] text-gray-500 mb-2">
+                                        <span class="flex items-center gap-1"><i class="far fa-calendar"></i> {{ post.created_at.strftime('%B %d, %Y') }}</span>
+                                        <span>&bull;</span>
+                                        <span>By {{ post.author.username }}</span>
+                                    </div>
+                                    <h3 class="font-poppins font-bold text-lg md:text-xl text-darkmagenta mb-2 leading-snug group-hover:text-magenta group-hover:underline transition-colors">
+                                        <a href="/post/{{ post.slug }}">{{ post.title }}</a>
+                                    </h3>
+                                    <p class="text-sm text-gray-600 line-clamp-2 leading-relaxed mb-4">
+                                        {{ post.summary or 'Discover modern literary insights directly from TUNU Publisher panels.' }}
+                                    </p>
+                                </div>
+
+                                <!-- Interactive status tracking footer -->
+                                <div class="flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-500">
+                                    <div class="flex items-center gap-4">
+                                        <span class="flex items-center gap-1.5 hover:text-orangered transition-colors">
+                                            <i class="far fa-heart"></i> {{ post.likes_count or 0 }}
+                                        </span>
+                                        <span class="flex items-center gap-1"><i class="far fa-comment"></i> {{ post.comments | length if post.comments else 0 }}</span>
+                                    </div>
+                                    <a href="/post/{{ post.slug }}" class="text-magenta font-extrabold uppercase text-xs hover:text-orangered transition-colors flex items-center gap-1">
+                                        Read Article <i class="fas fa-chevron-right text-[9px]"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- Empty Search/Posts State -->
+                        <div class="bg-white p-12 text-center border border-gray-200 sharp-border">
+                            <i class="far fa-folder-open fa-3x text-gray-300 mb-4"></i>
+                            <h3 class="text-lg font-bold font-poppins text-gray-700">No Articles Found</h3>
+                            <p class="text-sm text-gray-500 mt-2">No matching posts have been published yet.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <aside class="space-y-6">
+                <!-- Search Module -->
+                <div class="bg-white p-6 shadow-sm border border-gray-200 sharp-border">
+                    <h3 class="font-poppins font-bold text-gray-800 text-lg mb-4 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-search text-magenta"></i> Search Portal
+                    </h3>
+                    <form action="/search" method="GET" class="flex border border-gray-300 overflow-hidden sharp-border bg-white">
+                        <input type="text" name="q" placeholder="Search keywords..." value="{{ q or '' }}" class="w-full px-4 py-2 text-sm outline-none">
+                        <button type="submit" class="bg-magenta hover:bg-darkmagenta text-white px-5 py-2 transition-colors">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Featured Authors / Philosophy Column -->
+                <div class="bg-magenta text-white p-6 shadow-sm border border-magenta sharp-border relative overflow-hidden">
+                    <div class="absolute -right-8 -bottom-8 opacity-10 text-9xl transform rotate-12">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <span class="text-[10px] bg-orangered uppercase font-bold px-2 py-1 sharp-border tracking-wider inline-block mb-3">Our Core Philosophy</span>
+                    <h4 class="font-poppins font-bold text-xl mb-2">"Elimu ni Tunu"</h4>
+                    <p class="text-sm text-purple-100 leading-relaxed mb-4">
+                        We operate on the deep-rooted understanding that knowledge is a priceless treasure. Our literature aims to preserve indigenous insights while molding future global citizens.
+                    </p>
+                    <a href="/about" class="text-xs text-white hover:text-orange-200 underline font-bold flex items-center gap-1">
+                        Explore Our Full Story <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="bg-white p-6 shadow-sm border border-gray-200 sharp-border">
+                    <h3 class="font-poppins font-bold text-gray-800 text-lg mb-4 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-fire text-orangered"></i> Hot Debates
+                    </h3>
+                    <div class="space-y-4">
+                        {% if posts %}
+                            {% for trend in posts | sort(attribute='likes_count', reverse=true) %}
+                                {% if loop.index <= 3 %}
+                                    <a href="/post/{{ trend.slug }}" class="flex items-center gap-3 group border-b border-gray-100 pb-3 block last:border-0 last:pb-0">
+                                        <img src="{{ trend.cover_image or 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?auto=format&fit=crop&q=80&w=100' }}" alt="" class="w-12 h-12 object-cover bg-gray-100 sharp-border">
+                                        <div>
+                                            <h4 class="text-xs font-bold text-gray-800 leading-tight group-hover:text-magenta transition-colors line-clamp-2">{{ trend.title }}</h4>
+                                            <span class="text-[10px] text-gray-400 flex items-center gap-1 mt-1">
+                                                <i class="far fa-heart"></i> {{ trend.likes_count or 0 }} hearts
+                                            </span>
+                                        </div>
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-xs text-gray-400 italic">No debates currently active.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Newsletter Subscription Card -->
+                <div class="bg-white p-6 border-t-4 border-orangered shadow-sm border border-gray-200 sharp-border">
+                    <h3 class="font-poppins font-bold text-gray-800 text-lg mb-2 flex items-center gap-2">
+                        <i class="fas fa-envelope-open-text text-orangered"></i> Newsletter
+                    </h3>
+                    <p class="text-xs text-gray-500 mb-4 leading-relaxed">
+                        Stay linked to major KICD releases, special offers, textbook announcements, and fresh blog write-ups straight to your email.
+                    </p>
+                    <form onsubmit="handleNewsletterSubmit(event)" class="space-y-2">
+                        <input type="email" id="newsletter-email" placeholder="Your Email Address" class="w-full text-xs px-4 py-2 border border-gray-300 outline-none focus:border-magenta bg-gray-50 sharp-border" required>
+                        <button type="submit" class="w-full bg-magenta hover:bg-darkmagenta text-white font-bold py-2 text-xs uppercase tracking-wider transition-colors sharp-border">
+                            Subscribe Now
+                        </button>
+                    </form>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+
+    <script>
+        // Synchronized Cart Drawer state (localStorage sharing logic)
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateCartUI();
+        });
+
+        function updateCartUI() {
+            const list = document.getElementById('cart-items-list');
+            const count = document.getElementById('cart-count');
+            const total = document.getElementById('cart-total');
+            
+            if(count) {
+                count.innerText = cart.length;
+            }
+            
+            if (!list) return;
+
+            if (cart.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center text-gray-400 py-16">
+                        <i class="fas fa-shopping-cart fa-3x mb-4 opacity-35"></i>
+                        <p class="text-sm">Your basket is currently empty</p>
+                    </div>`;
+                total.innerText = 'KES 0';
+                return;
+            }
+
+            let sum = 0;
+            list.innerHTML = '';
+            cart.forEach((item, index) => {
+                const price = item.newPrice || item.price || 0;
+                sum += (price * (item.quantity || 1));
+                list.innerHTML += `
+                    <div class="flex items-center gap-4 border-b border-gray-100 pb-4 mb-4">
+                        <img src="${item.url ? item.url : 'https://i.ibb.co/CKRYPD4p/image.png'}" onerror="this.src='https://i.ibb.co/CKRYPD4p/image.png';" alt="" class="w-12 h-16 object-contain bg-gray-50 sharp-border">
+                        <div class="flex-1">
+                            <h5 class="font-bold text-xs leading-tight mb-1 line-clamp-1">${item.title}</h5>
+                            <p class="text-magenta font-extrabold text-xs">KES ${price}</p>
+                            <p class="text-[10px] text-gray-500 mt-1">Qty: ${item.quantity || 1}</p>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-red-500 hover:text-red-700 p-2">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            total.innerText = `KES ${sum}`;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartUI();
+            showToast("Item removed from basket.");
+        }
+
+        function openCart() {
+            document.getElementById('cart-drawer').classList.add('open');
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeCart() {
+            document.getElementById('cart-drawer').classList.remove('open');
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function filterCategory(category) {
+            const cards = document.querySelectorAll('.blog-post-card');
+            
+            // Toggle highlight styles on the selector bar buttons
+            const buttons = document.querySelectorAll('#category-selector-bar button');
+            buttons.forEach(btn => {
+                btn.className = "px-4 py-1.5 text-xs font-bold uppercase tracking-wider bg-white border border-gray-300 text-gray-700 hover:border-magenta sharp-border transition-colors";
+            });
+
+            const matchMap = {
+                'all': 'all',
+                'CBC Education': 'cbc',
+                'Creative Writing': 'creative',
+                'Publishing': 'pub',
+                'Revision': 'rev'
+            };
+
+            const targetBtn = document.getElementById(`cat-btn-${matchMap[category]}`);
+            if (targetBtn) {
+                targetBtn.className = "px-4 py-1.5 text-xs font-bold uppercase tracking-wider bg-magenta text-white sharp-border shadow-sm";
+            }
+
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function copyShareLink(postId) {
+            const tempInput = document.createElement('input');
+            tempInput.value = `${window.location.origin}/post/${postId}`;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            
+            try {
+                const success = document.execCommand('copy');
+                if (success) {
+                    showToast("Article share link copied to Clipboard!");
+                } else {
+                    showToast("Unable to copy article address.");
+                }
+            } catch (err) {
+                showToast("Failed to initiate article copy action.");
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        // Newsletter trigger
+        function handleNewsletterSubmit(event) {
+            event.preventDefault();
+            const email = document.getElementById('newsletter-email').value;
+            if (email) {
+                showToast("Subscribed! Thank you for choosing TUNU.");
+                document.getElementById('newsletter-email').value = "";
+            }
+        }
+
+        // Notification controller
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const content = document.getElementById('toast-message');
+            content.innerText = message;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+{% endblock  %}

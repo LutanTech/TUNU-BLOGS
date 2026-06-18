@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<style>
+body{margin:0;font-family:Arial;background:#0f172a;color:#e2e8f0}
+nav{padding:15px;background:#111827;display:flex;justify-content:space-between}
+a{color:#38bdf8;text-decoration:none;margin:0 10px}
+.container{max-width:900px;margin:auto;padding:20px}
+.card{background:#1e293b;padding:15px;border-radius:12px;margin:10px 0}
+.btn{background:#38bdf8;color:black;padding:6px 10px;border-radius:8px}
+</style>
+</head>
+<body>
+
+<nav>
+<div>Dashboard</div>
+<div>
+<a href="/create">create</a>
+<a href="/logout">logout</a>
+</div>
+</nav>
+
+<div class="container">
+
+<h2>yo {{ user.username }}</h2>
+
+{% for p in posts %}
+<div class="card">
+<h3>{{ p.title }}</h3>
+<a class="btn" href="/post/{{ p.id }}">open</a>
+</div>
+{% endfor %}
+
+</div>
+
+</body>
+</html>
