@@ -1,25 +1,325 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Login</title>
-<style>
-body{margin:0;font-family:Arial;background:#0f172a;display:flex;justify-content:center;align-items:center;height:100vh}
-.box{background:#1e293b;padding:25px;border-radius:12px;width:300px}
-input{width:100%;padding:10px;margin:8px 0;border:none;border-radius:8px}
-button{width:100%;padding:10px;background:#38bdf8;border:none;border-radius:8px}
-h2{text-align:center}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Portal | TUNU Publishers | Elimu ni Tunu</title>
+    
+    <!-- Meta tags for optimized SEO -->
+    <meta name="title" content="Login & Register | TUNU Publishers">
+    <meta name="description" content="Access your TUNU Publishers dashboard. Log in or create an account to manage your CBC revision resources, creative readers, and customized books.">
+    <meta name="theme-color" content="#8B008B">
+
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS with custom branding config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        magenta: '#8B008B',
+                        darkmagenta: '#4B004B',
+                        orangered: '#FF4500',
+                    },
+                    borderRadius: {
+                        'none': '0',
+                        'sm': '2px',
+                        'md': '4px',
+                        'lg': '4px',
+                        'xl': '4px',
+                        '2xl': '4px',
+                        'full': '9999px',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --magenta: #8B008B;
+            --dark-magenta: #4B004B;
+            --orangered: #FF4500;
+        }
+
+        body {
+            background-color: #0b0f19;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 0, 139, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(255, 69, 0, 0.1) 0px, transparent 50%);
+            min-height: 100vh;
+        }
+
+        /* Custom sharp borders conforming to TUNU design guides */
+        .sharp-border {
+            border-radius: 4px !important;
+        }
+
+        /* Custom input focus transition highlights */
+        .custom-input {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .custom-input:focus {
+            border-color: var(--magenta) !important;
+            box-shadow: 0 0 0 3px rgba(139, 0, 139, 0.15);
+        }
+
+        /* Brand image floating animation */
+        @keyframes subtleFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+        }
+        .floating-icon {
+            animation: subtleFloat 6s ease-in-out infinite;
+        }
+    </style>
 </head>
-<body>
+<body class="font-sans antialiased text-gray-200 flex items-center justify-center p-4 sm:p-6 lg:p-8">
 
-<div class="box">
-<h2>Login</h2>
-<form method="POST">
-<input name="email" placeholder="email">
-<input name="password" type="password" placeholder="password">
-<button>login</button>
-</form>
-</div>
+    <div class="w-full max-w-4xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden sharp-border flex flex-col md:flex-row min-h-[550px]">
+        
+        <!-- Left Banner: Dynamic cultural branding panel (Hidden on mobile) -->
+        <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-darkmagenta to-magenta p-10 flex-col justify-between relative overflow-hidden">
+            <!-- Background Artistic Element -->
+            <div class="absolute -right-16 -bottom-16 opacity-10 text-[220px] pointer-events-none transform rotate-12">
+                <i class="fas fa-book-open"></i>
+            </div>
+            
+            <!-- Header Brand Details -->
+            <div class="relative z-10">
+                <a href="/" class="flex items-center gap-3 group">
+                    <img src="https://i.ibb.co/CKRYPD4p/image.png" alt="TUNU Publishers Logo" class="h-10 bg-white p-1 sharp-border transition-transform group-hover:scale-105">
+                    <div>
+                        <h1 class="font-poppins font-bold text-xl text-white tracking-wide leading-none">TUNU</h1>
+                        <p class="text-[9px] uppercase tracking-widest text-orange-200 font-semibold">Publishers</p>
+                    </div>
+                </a>
+            </div>
 
+            <!-- Focus Brand Messaging -->
+            <div class="relative z-10 my-8 space-y-4">
+                <div class="w-16 h-16 bg-white/10 backdrop-blur-md flex items-center justify-center sharp-border floating-icon">
+                    <i class="fas fa-graduation-cap text-orange-200 text-3xl"></i>
+                </div>
+                <h2 class="font-poppins font-extrabold text-2xl lg:text-3xl text-white leading-tight">
+                    "Elimu ni Tunu"
+                </h2>
+                <p class="text-xs lg:text-sm text-purple-100 leading-relaxed font-light">
+                    Education is a rare gift and a lifetime treasure. Step into your portal to coordinate curriculum revision guides, review active story drafts, and manage learning tracks.
+                </p>
+            </div>
+
+            <!-- Footer Meta Statement -->
+            <div class="relative z-10 text-[10px] text-purple-200 flex justify-between items-center border-t border-white/10 pt-4">
+                <span>&copy; 2026 TUNU Publishers</span>
+                <span class="flex items-center gap-1"><i class="fas fa-shield-alt text-orange-200"></i> Secure Session</span>
+            </div>
+        </div>
+
+        <!-- Right Panel: Core Form Context -->
+        <div class="flex-1 p-6 sm:p-10 lg:p-12 flex flex-col justify-center bg-slate-900">
+            
+            <!-- Header for mobile visual fallback -->
+            <div class="flex md:hidden items-center gap-3 mb-6">
+                <img src="https://i.ibb.co/CKRYPD4p/image.png" alt="TUNU Logo" class="h-8 bg-white p-0.5 sharp-border">
+                <div>
+                    <h3 class="font-poppins font-bold text-lg text-white leading-none">TUNU</h3>
+                    <p class="text-[8px] uppercase tracking-wider text-orange-400">Publishers</p>
+                </div>
+            </div>
+
+            <!-- Flask Message Flash Alert Box -->
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="mb-6 p-4 bg-red-950/40 border-l-4 border-orangered text-orange-200 text-xs sm:text-sm sharp-border flex items-start gap-3 animate-pulse">
+                        <i class="fas fa-exclamation-circle text-orangered mt-0.5 shrink-0 text-base"></i>
+                        <div>
+                            {% for message in messages %}
+                                {% if message == 'fail' %}
+                                    <p class="font-semibold">Authentication Failed</p>
+                                    <p class="text-[11px] text-gray-400 mt-0.5">The email or password details entered do not match our database records. Please try again.</p>
+                                {% elif message == 'exists' %}
+                                    <p class="font-semibold">Registration Issue</p>
+                                    <p class="text-[11px] text-gray-400 mt-0.5">This email address is already linked to another active TUNU account. Please log in or try another email.</p>
+                                {% else %}
+                                    <p>{{ message }}</p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- LOGIN VIEW SECTION -->
+            <div id="login-form-container">
+                <div class="mb-6">
+                    <h2 class="font-poppins font-bold text-2xl text-white">Welcome Back</h2>
+                    <p class="text-xs text-gray-400 mt-1">Provide your credentials to access your academic dashboard.</p>
+                </div>
+
+                <form method="POST" action="/login" class="space-y-4">
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Email Address *</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-500">
+                                <i class="far fa-envelope text-sm"></i>
+                            </span>
+                            <input type="email" name="email" required placeholder="name@example.com"
+                                   class="w-full bg-slate-950 border border-slate-800 text-white placeholder-gray-600 text-xs sm:text-sm px-4 py-3 pl-10 focus:outline-none sharp-border custom-input">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Password *</label>
+                            <a href="#" class="text-[10px] text-magenta hover:text-orangered hover:underline transition-colors font-medium">Forgot Password?</a>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-500">
+                                <i class="fas fa-lock text-sm"></i>
+                            </span>
+                            <input type="password" name="password" required placeholder="••••••••"
+                                   class="w-full bg-slate-950 border border-slate-800 text-white placeholder-gray-600 text-xs sm:text-sm px-4 py-3 pl-10 focus:outline-none sharp-border custom-input">
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" 
+                                class="w-full bg-magenta hover:bg-darkmagenta text-white font-bold py-3 px-4 text-xs sm:text-sm uppercase tracking-wider transition-colors sharp-border shadow-md hover:-translate-y-[1px] active:translate-y-0 transform">
+                            Secure Log In
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-xs text-gray-400">
+                        New to TUNU? 
+                        <button onclick="toggleAuthForm('register')" class="text-orangered hover:text-red-500 font-bold hover:underline ml-1">
+                            Create an Account
+                        </button>
+                    </p>
+                </div>
+            </div>
+
+            <!-- REGISTRATION VIEW SECTION (Hidden by default, dynamic trigger active) -->
+            <div id="register-form-container" class="hidden">
+                <div class="mb-6">
+                    <h2 class="font-poppins font-bold text-2xl text-white">Join the Community</h2>
+                    <p class="text-xs text-gray-400 mt-1">Register to save bookmarks, post opinions, and track physical orders.</p>
+                </div>
+
+                <form method="POST" action="/register" class="space-y-4">
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Preferred Username *</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-500">
+                                <i class="far fa-user text-sm"></i>
+                            </span>
+                            <input type="text" name="username" required placeholder="e.g. Kiprop92"
+                                   class="w-full bg-slate-950 border border-slate-800 text-white placeholder-gray-600 text-xs sm:text-sm px-4 py-3 pl-10 focus:outline-none sharp-border custom-input">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Active Email Address *</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-500">
+                                <i class="far fa-envelope text-sm"></i>
+                            </span>
+                            <input type="email" name="email" required placeholder="name@domain.co.ke"
+                                   class="w-full bg-slate-950 border border-slate-800 text-white placeholder-gray-600 text-xs sm:text-sm px-4 py-3 pl-10 focus:outline-none sharp-border custom-input">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-1.5">Secure Password *</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-500">
+                                <i class="fas fa-lock text-sm"></i>
+                            </span>
+                            <input type="password" name="password" required placeholder="••••••••"
+                                   class="w-full bg-slate-950 border border-slate-800 text-white placeholder-gray-600 text-xs sm:text-sm px-4 py-3 pl-10 focus:outline-none sharp-border custom-input">
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-2 pt-1">
+                        <input type="checkbox" required id="terms" class="mt-0.5 accent-magenta sharp-border h-4 w-4">
+                        <label for="terms" class="text-[10px] text-gray-400 leading-normal">
+                            I accept and agree to the TUNU <a href="/privacy_policy" class="text-magenta hover:underline">Privacy Policy</a> and <a href="/terms_of_service" class="text-magenta hover:underline">Terms of Service</a>.
+                        </label>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" 
+                                class="w-full bg-orangered hover:bg-red-600 text-white font-bold py-3 px-4 text-xs sm:text-sm uppercase tracking-wider transition-colors sharp-border shadow-md hover:-translate-y-[1px] active:translate-y-0 transform">
+                            Register Account
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-xs text-gray-400">
+                        Already have an account? 
+                        <button onclick="toggleAuthForm('login')" class="text-magenta hover:text-purple-400 font-bold hover:underline ml-1">
+                            Log In Here
+                        </button>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Home Return Node -->
+            <div class="mt-8 pt-4 border-t border-slate-800/60 text-center">
+                <a href="/" class="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-white transition-colors">
+                    <i class="fas fa-arrow-left text-[10px]"></i> Return to Bookstore Home
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script utility to switch login / register viewport states dynamically -->
+    <script>
+        function toggleAuthForm(target) {
+            const loginCard = document.getElementById('login-form-container');
+            const registerCard = document.getElementById('register-form-container');
+
+            if (target === 'register') {
+                loginCard.classList.add('hidden');
+                registerCard.classList.remove('hidden');
+                document.title = "Register | TUNU Publishers | Elimu ni Tunu";
+                // Optionally update URL state for Flask routing fallback preview
+                if (window.history.pushState) {
+                    window.history.pushState(null, null, '/register');
+                }
+            } else {
+                registerCard.classList.add('hidden');
+                loginCard.classList.remove('hidden');
+                document.title = "Login | TUNU Publishers | Elimu ni Tunu";
+                if (window.history.pushState) {
+                    window.history.pushState(null, null, '/login');
+                }
+            }
+        }
+
+        // Initialize state automatically based on window path
+        window.addEventListener('DOMContentLoaded', () => {
+            const path = window.location.pathname;
+            if (path.includes('register')) {
+                toggleAuthForm('register');
+            } else {
+                toggleAuthForm('login');
+            }
+        });
+    </script>
 </body>
 </html>

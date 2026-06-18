@@ -1,38 +1,162 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Dashboard</title>
-<style>
-body{margin:0;font-family:Arial;background:#0f172a;color:#e2e8f0}
-nav{padding:15px;background:#111827;display:flex;justify-content:space-between}
-a{color:#38bdf8;text-decoration:none;margin:0 10px}
-.container{max-width:900px;margin:auto;padding:20px}
-.card{background:#1e293b;padding:15px;border-radius:12px;margin:10px 0}
-.btn{background:#38bdf8;color:black;padding:6px 10px;border-radius:8px}
-</style>
-</head>
-<body>
+{% extends "base.html" %}
 
-<nav>
-<div>Dashboard</div>
-<div>
-<a href="/create">create</a>
-<a href="/logout">logout</a>
+{% block title %}Dashboard | TUNU Publishers | Elimu ni Tunu{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+    
+    <!-- Dashboard Top Banner -->
+    <div class="bg-gradient-to-r from-darkmagenta to-magenta text-white p-8 mb-8 sharp-border shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <span class="text-[10px] bg-orangered text-white uppercase font-extrabold tracking-widest px-2.5 py-1 sharp-border inline-block mb-2">Author Hub</span>
+            <h2 class="font-poppins font-extrabold text-3xl">Karibu, {{ user.username }}!</h2>
+            <p class="text-xs text-purple-100 mt-1">Manage your active educational drafts, revision reference updates, and local story publications.</p>
+        </div>
+        <a href="/create" class="bg-orangered hover:bg-red-600 text-white font-bold py-3 px-6 text-xs uppercase tracking-wider transition-all sharp-border shadow-md flex items-center gap-2 hover:-translate-y-px">
+            <i class="fas fa-plus"></i> Write New Article
+        </a>
+    </div>
+
+    <!-- Main Dashboard Split Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <!-- Left Profile Column -->
+        <div class="lg:col-span-1 space-y-6">
+            <div class="bg-white border border-gray-200 shadow-sm p-6 sharp-border text-center">
+                <div class="w-24 h-24 bg-magenta text-white text-3xl font-bold font-poppins flex items-center justify-center sharp-border shadow-md mx-auto mb-4">
+                    {{ user.username[0] | upper if user.username else 'T' }}
+                </div>
+                <h3 class="font-poppins font-bold text-gray-800 text-lg leading-tight">{{ user.username }}</h3>
+                <span class="text-[10px] text-gray-400 uppercase tracking-widest font-bold block mt-1">Contributor</span>
+                
+                <p class="text-xs text-gray-500 mt-4 leading-relaxed italic border-t border-b border-gray-100 py-3">
+                    {{ user.bio or 'TUNU Educational writer specializing in active research, CBC revisions, language aids, and African stories.' }}
+                </p>
+
+                <div class="mt-4 pt-2 text-left space-y-2 text-xs text-gray-600">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Email:</span>
+                        <span class="font-medium truncate max-w-[140px]">{{ user.email }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Joined:</span>
+                        <span>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'Recent' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Help Assistance Box -->
+            <div class="bg-gray-50 border border-gray-200 p-6 sharp-border">
+                <h4 class="font-poppins font-bold text-sm text-darkmagenta uppercase mb-3 flex items-center gap-2">
+                    <i class="fas fa-life-ring text-orangered"></i> Publisher Help
+                </h4>
+                <p class="text-xs text-gray-600 leading-relaxed mb-3">
+                    Need assistance getting your CBC textbook review approved or editing your manuscripts? Contact our editorial helpdesk.
+                </p>
+                <a href="https://wa.me/254722682129" target="_blank" class="text-xs font-bold text-magenta hover:text-orangered transition-colors flex items-center gap-1.5">
+                    <i class="fab fa-whatsapp"></i> Chat Support <i class="fas fa-arrow-right text-[10px]"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Right Content Column -->
+        <div class="lg:col-span-3 space-y-8">
+            
+            <!-- Metrics Statistics Bar -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                
+                <div class="bg-white border border-gray-200 p-5 shadow-sm sharp-border flex items-center gap-4">
+                    <div class="w-12 h-12 bg-pink-50 text-magenta flex items-center justify-center text-lg sharp-border shrink-0">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-gray-400 uppercase tracking-wider block font-bold">Total Articles</span>
+                        <span class="text-2xl font-extrabold text-gray-800">{{ posts | length }}</span>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-gray-200 p-5 shadow-sm sharp-border flex items-center gap-4">
+                    <div class="w-12 h-12 bg-orange-50 text-orangered flex items-center justify-center text-lg sharp-border shrink-0">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-gray-400 uppercase tracking-wider block font-bold">Total Views</span>
+                        <span class="text-2xl font-extrabold text-gray-800">
+                            {% set views_sum = namespace(value=0) %}
+                            {% for p in posts %}
+                                {% set views_sum.value = views_sum.value + (p.views or 0) %}
+                            {% endfor %}
+                            {{ views_sum.value }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-gray-200 p-5 shadow-sm sharp-border flex items-center gap-4 col-span-2 sm:col-span-1">
+                    <div class="w-12 h-12 bg-purple-50 text-purple-700 flex items-center justify-center text-lg sharp-border shrink-0">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-gray-400 uppercase tracking-wider block font-bold">Total Hearts</span>
+                        <span class="text-2xl font-extrabold text-gray-800">
+                            {% set likes_sum = namespace(value=0) %}
+                            {% for p in posts %}
+                                {% set likes_sum.value = likes_sum.value + (p.likes_count or 0) %}
+                            {% endfor %}
+                            {{ likes_sum.value }}
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- Active Drafts and Publications -->
+            <div class="bg-white border border-gray-200 shadow-sm p-6 sm:p-8 sharp-border">
+                <h3 class="font-poppins font-bold text-gray-800 text-lg mb-6 border-b pb-3 flex justify-between items-center">
+                    <span class="flex items-center gap-2"><i class="far fa-folder-open text-magenta"></i> My Literary Publications</span>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 font-bold sharp-border-sm">{{ posts | length }} Posts</span>
+                </h3>
+
+                <div class="space-y-4">
+                    {% for p in posts %}
+                    <div class="border border-gray-100 hover:border-magenta p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-colors sharp-border">
+                        <div>
+                            <span class="bg-magenta/10 text-magenta text-[9px] uppercase font-extrabold px-2 py-0.5 sharp-border-sm inline-block mb-1.5">{{ p.category or 'General' }}</span>
+                            <h4 class="font-bold text-gray-800 leading-snug text-base hover:text-magenta transition-colors">
+                                <a href="/post/{{ p.id }}">{{ p.title }}</a>
+                            </h4>
+                            <div class="flex items-center gap-3 text-[10px] text-gray-400 mt-1.5">
+                                <span class="flex items-center gap-1"><i class="far fa-eye"></i> {{ p.views or 0 }} Views</span>
+                                <span>&bull;</span>
+                                <span class="flex items-center gap-1"><i class="far fa-heart"></i> {{ p.likes_count or 0 }} Likes</span>
+                                <span>&bull;</span>
+                                <span>Published {{ p.created_at.strftime('%Y-%m-%d') if p.created_at else 'Recently' }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2 w-full sm:w-auto self-stretch sm:self-center">
+                            <a href="/post/{{ p.id }}" class="flex-1 sm:flex-initial text-center bg-gray-50 hover:bg-magenta hover:text-white border border-gray-200 hover:border-magenta text-gray-700 font-bold py-2 px-4 text-xs uppercase transition-all sharp-border">
+                                Open
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-16 border-2 border-dashed border-gray-100 sharp-border">
+                        <i class="fas fa-book-open text-gray-300 text-5xl mb-4 block"></i>
+                        <h4 class="font-poppins font-bold text-gray-700 text-lg">No Publications Found</h4>
+                        <p class="text-xs text-gray-400 mt-1 max-w-sm mx-auto mb-6">
+                            You haven't added any revision outlines, educational insights, or storybook critiques to the platform yet.
+                        </p>
+                        <a href="/create" class="bg-magenta hover:bg-darkmagenta text-white font-bold py-2.5 px-6 text-xs uppercase tracking-wider transition-colors sharp-border inline-block">
+                            Draft Your First Post
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+    
 </div>
-</nav>
-
-<div class="container">
-
-<h2>yo {{ user.username }}</h2>
-
-{% for p in posts %}
-<div class="card">
-<h3>{{ p.title }}</h3>
-<a class="btn" href="/post/{{ p.id }}">open</a>
-</div>
-{% endfor %}
-
-</div>
-
-</body>
-</html>
+{% endblock %}

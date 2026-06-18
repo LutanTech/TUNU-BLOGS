@@ -1,0 +1,5 @@
+/instance
+*.db
+instance
+__pycache__
+/__pycache__
