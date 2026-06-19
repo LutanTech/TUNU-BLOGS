@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Write New Article | TUNU Publishers | Elimu ni Tunu{% endblock %}
+{% block title %}{% if post %}Edit Article | {{ post.title }}{% else %}Write New Article{% endif %} | TUNU Publishers | Elimu ni Tunu{% endblock %}
 
 {% block meta %}
-<meta name="title" content="Write New Article | TUNU Publishers">
+<meta name="title" content="{% if post %}Edit Article | {{ post.title }}{% else %}Write New Article{% endif %} | TUNU Publishers">
 <meta name="description" content="Draft and format active educational guides, language revision outlines, or storybook critiques for TUNU Publishers.">
 <meta name="robots" content="noindex, nofollow">
 {% endblock %}
@@ -29,7 +29,6 @@
         background-color: var(--dark-magenta);
         color: white;
     }
-    /* Set custom styles for lists inside the content editor */
     .edit-area ul {
         list-style-type: disc;
         padding-left: 1.5rem;
@@ -62,17 +61,6 @@
         text-decoration: underline;
         font-weight: 500;
     }
-    /* Beautiful faded magenta styling for quoted texts */
-    .edit-area blockquote {
-        background-color: rgba(139, 0, 139, 0.06) !important;
-        border-left: 4px solid #8B008B !important;
-        padding: 1rem 1.25rem !important;
-        margin: 1.5rem 0 !important;
-        font-style: italic !important;
-        color: #4b5563 !important;
-        border-radius: 0 4px 4px 0 !important;
-        line-height: 1.7 !important;
-    }
     #editor-context-menu {
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
     }
@@ -85,7 +73,7 @@
     <div class="flex items-center gap-2 text-xs text-gray-500 mb-6 bg-white p-3 border border-gray-100 sharp-border">
         <a href="/dashboard" class="hover:text-magenta transition-colors">Dashboard</a>
         <i class="fas fa-chevron-right text-[8px]"></i>
-        <span class="text-gray-800 font-medium">Write New Article</span>
+        <span class="text-gray-800 font-medium">{% if post %}Edit Article{% else %}Write New Article{% endif %}</span>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -95,7 +83,7 @@
                 
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-100 pb-5 mb-6">
                     <div>
-                        <h2 class="font-poppins font-extrabold text-2xl text-darkmagenta">Write New Article</h2>
+                        <h2 class="font-poppins font-extrabold text-2xl text-darkmagenta">{% if post %}Edit Article{% else %}Write New Article{% endif %}</h2>
                         <p class="text-xs text-gray-400 mt-1">Draft educational reviews, creative scripts, or revision guides aligned with KICD standards.</p>
                     </div>
                     <div class="flex gap-2">
@@ -108,7 +96,7 @@
                     </div>
                 </div>
 
-                <form id="article-creation-form" method="POST" action="/create" enctype="multipart/form-data" onsubmit="syncEditorContent()" class="space-y-5">
+                <form id="article-creation-form" method="POST" action="{% if post %}{{ url_for('edit_post', identifier=post.slug or post.id) }}{% else %}{{ url_for('create') }}{% endif %}" enctype="multipart/form-data" onsubmit="syncEditorContent()" class="space-y-5">
                     
                     <div id="editor-workspace" class="space-y-5">
                         
@@ -116,16 +104,17 @@
                             <div class="md:col-span-2">
                                 <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Article Title *</label>
                                 <input type="text" name="title" required placeholder="e.g., Guide to Mastering Fasihi kwa Kidato cha Tatu" 
+                                       value="{% if post %}{{ post.title }}{% endif %}"
                                        class="w-full text-sm px-4 py-3 border border-gray-200 focus:border-magenta outline-none bg-gray-50/50 sharp-border font-medium">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Category *</label>
                                 <select name="category" required class="w-full text-sm px-4 py-3 border border-gray-200 focus:border-magenta outline-none bg-gray-50/50 sharp-border font-medium">
-                                    <option value="CBC Education">CBC Education</option>
-                                    <option value="Creative Writing">Creative Readers</option>
-                                    <option value="Publishing">Publishing News</option>
-                                    <option value="Revision" selected>Revision Strategy</option>
-                                    <option value="General">General</option>
+                                    <option value="CBC Education" {% if post and post.category == 'CBC Education' %}selected{% endif %}>CBC Education</option>
+                                    <option value="Creative Writing" {% if post and post.category == 'Creative Writing' %}selected{% endif %}>Creative Readers</option>
+                                    <option value="Publishing" {% if post and post.category == 'Publishing' %}selected{% endif %}>Publishing News</option>
+                                    <option value="Revision" {% if post and post.category == 'Revision' %}selected{% endif %}>Revision Strategy</option>
+                                    <option value="General" {% if post and post.category == 'General' %}selected{% endif %}>General</option>
                                 </select>
                             </div>
                         </div>
@@ -135,14 +124,14 @@
                             <div id="image-drop-zone" class="border-2 border-dashed border-gray-200 hover:border-magenta transition-colors bg-gray-50/30 p-6 text-center cursor-pointer sharp-border relative">
                                 <input type="file" name="cover_image" id="cover-image-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="previewImageFile(event)">
                                 
-                                <div id="uploader-prompt" class="space-y-2">
+                                <div id="uploader-prompt" class="space-y-2 {% if post and post.cover_image %}hidden{% endif %}">
                                     <i class="fas fa-image text-3xl text-gray-400"></i>
                                     <p class="text-xs text-gray-600 font-semibold">Drag and drop an article cover image here, or <span class="text-magenta">browse files</span></p>
                                     <p class="text-[10px] text-gray-400">Supports PNG, JPG, JPEG, WEBP files up to 5MB</p>
                                 </div>
 
-                                <div id="preview-image-container" class="hidden relative inline-block max-h-64 mx-auto overflow-hidden">
-                                    <img id="upload-preview-thumbnail" src="" class="max-h-60 object-contain mx-auto sharp-border border" alt="Cover preview">
+                                <div id="preview-image-container" class="{% if post and post.cover_image %}{% else %}hidden{% endif %} relative inline-block max-h-64 mx-auto overflow-hidden">
+                                    <img id="upload-preview-thumbnail" src="{% if post and post.cover_image %}{{ post.cover_image }}{% endif %}" class="max-h-60 object-contain mx-auto sharp-border border" alt="Cover preview">
                                     <button type="button" onclick="resetCoverImage(event)" class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white text-xs py-1 px-2.5 sharp-border shadow flex items-center gap-1">
                                         <i class="fas fa-trash"></i> Remove Image
                                     </button>
@@ -157,7 +146,7 @@
                             </div>
                             <textarea name="summary" required rows="2" maxlength="200" oninput="updateCharCounters()"
                                       placeholder="Write a captivating summary statement of your article to display on the blog zone feed..." 
-                                      class="w-full text-xs px-4 py-3 border border-gray-200 focus:border-magenta outline-none bg-gray-50/50 sharp-border resize-none leading-relaxed"></textarea>
+                                      class="w-full text-xs px-4 py-3 border border-gray-200 focus:border-magenta outline-none bg-gray-50/50 sharp-border resize-none leading-relaxed">{% if post %}{{ post.summary }}{% endif %}</textarea>
                         </div>
 
                         <div class="editor-container border border-gray-200 sharp-border overflow-hidden">
@@ -169,7 +158,6 @@
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('formatBlock', 'h2')" title="Header 2" class="editor-btn px-2 h-8 flex items-center justify-center text-xs font-bold text-gray-600 sharp-border">H2</button>
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('formatBlock', 'h3')" title="Header 3" class="editor-btn px-2 h-8 flex items-center justify-center text-xs font-bold text-gray-600 sharp-border">H3</button>
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('formatBlock', 'p')" title="Paragraph" class="editor-btn px-2 h-8 flex items-center justify-center text-xs text-gray-600 sharp-border">P</button>
-                                <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('formatBlock', 'blockquote')" title="Quoted Text" class="editor-btn w-8 h-8 flex items-center justify-center text-sm text-gray-600 sharp-border"><i class="fas fa-quote-left"></i></button>
                                 <div class="w-px h-6 bg-gray-300 mx-1"></div>
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('insertUnorderedList')" title="Bullet list" class="editor-btn w-8 h-8 flex items-center justify-center text-sm text-gray-600 sharp-border"><i class="fas fa-list-ul"></i></button>
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('insertOrderedList')" title="Numbered list" class="editor-btn w-8 h-8 flex items-center justify-center text-sm text-gray-600 sharp-border"><i class="fas fa-list-ol"></i></button>
@@ -182,7 +170,7 @@
                             </div>
 
                             <div id="wysiwyg-editor" contenteditable="true" placeholder="Begin composing your brilliant article content here..." 
-                                 onkeyup="updateWordCount()" class="edit-area min-h-[400px] max-h-[600px] overflow-y-auto p-5 text-sm outline-none bg-white text-gray-700 leading-relaxed"></div>
+                                 onkeyup="updateWordCount()" class="edit-area min-h-[400px] max-h-[600px] overflow-y-auto p-5 text-sm outline-none bg-white text-gray-700 leading-relaxed">{% if post %}{{ post.content | safe }}{% endif %}</div>
                         </div>
 
                         <div class="flex justify-between items-center text-[10px] text-gray-400 font-bold uppercase tracking-wider">
@@ -206,7 +194,7 @@
                                 <span>&bull;</span>
                                 <span>Just Now</span>
                             </div>
-                            <blockquote id="preview-summary" class="text-sm italic text-gray-500 border-l-4 border-magenta bg-magenta/5 p-4 mb-6 leading-relaxed sharp-border">This post does not contain an active summary yet.</blockquote>
+                            <blockquote id="preview-summary" class="text-sm italic text-gray-500 border-l-4 border-magenta pl-4 mb-6 leading-relaxed">This post does not contain an active summary yet.</blockquote>
                             <div id="preview-content" class="edit-area text-sm text-gray-700 leading-relaxed">This post does not contain active content yet.</div>
                         </div>
                     </div>
@@ -218,7 +206,7 @@
                             <i class="fas fa-arrow-left"></i> Discard and Exit
                         </a>
                         <button type="submit" class="bg-orangered hover:bg-red-600 text-white font-bold py-3.5 px-8 text-xs uppercase tracking-widest transition-all sharp-border shadow-md hover:-translate-y-px">
-                            <i class="fas fa-paper-plane mr-1.5"></i> Publish Article
+                            <i class="fas fa-paper-plane mr-1.5"></i> {% if post %}Update Article{% else %}Publish Article{% endif %}
                         </button>
                     </div>
 
@@ -415,6 +403,9 @@
                 hideContextMenu();
             }
         });
+
+        updateWordCount();
+        updateCharCounters();
     });
 
     function saveSelectionPointer() {
@@ -759,6 +750,18 @@
         restoreSelection();
         document.execCommand(command, false, null);
         updateWordCount();
+        hideContextMenu();
+    }
+
+    // Custom blockquote tool for inline context highlights
+    function triggerBlockquote() {
+        restoreSelection();
+        formatDoc('formatBlock', 'blockquote');
+        const editor = document.getElementById('wysiwyg-editor');
+        const blockquotes = editor.getElementsByTagName('blockquote');
+        for (let b of blockquotes) {
+            b.className = "bg-magenta/5 border-l-4 border-magenta pl-4 py-2 my-4 italic text-gray-600 sharp-border";
+        }
         hideContextMenu();
     }
 

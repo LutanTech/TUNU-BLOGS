@@ -2,32 +2,60 @@
 
 {% block title %}Dashboard | TUNU Publishers | Elimu ni Tunu{% endblock %}
 
+{% block styles %}
+<style>
+    .sharp-border {
+        border-radius: 4px !important;
+    }
+    .sharp-border-sm {
+        border-radius: 2px !important;
+    }
+    .dashboard-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .dashboard-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 py-10">
     
-    <!-- Dashboard Top Banner -->
-    <div class="bg-gradient-to-r from-darkmagenta to-magenta text-white p-8 mb-8 sharp-border shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div class="bg-gradient-to-r from-darkmagenta to-magenta text-white p-8 mb-8 sharp-border shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-            <span class="text-[10px] bg-orangered text-white uppercase font-extrabold tracking-widest px-2.5 py-1 sharp-border inline-block mb-2">Author Hub</span>
+            <span class="text-[10px] bg-orangered text-white uppercase font-extrabold tracking-widest px-2.5 py-1 sharp-border inline-block mb-2">
+                {% if user.is_admin %}Administrator Portal{% else %}Contributor Space{% endif %}
+            </span>
             <h2 class="font-poppins font-extrabold text-3xl">Karibu, {{ user.username }}!</h2>
-            <p class="text-xs text-purple-100 mt-1">Manage your active educational drafts, revision reference updates, and local story publications.</p>
+            <p class="text-xs text-purple-100 mt-1">
+                {% if user.is_admin %}
+                    Oversee all creative titles, edit active syllabi reviews, or write fresh curriculum updates.
+                {% else %}
+                    Access resources, view metrics, and follow active publications on TUNU Publishers.
+                {% endif %}
+            </p>
         </div>
+        {% if user.is_admin %}
         <a href="/create" class="bg-orangered hover:bg-red-600 text-white font-bold py-3 px-6 text-xs uppercase tracking-wider transition-all sharp-border shadow-md flex items-center gap-2 hover:-translate-y-px">
             <i class="fas fa-plus"></i> Write New Article
         </a>
+        {% endif %}
     </div>
 
-    <!-- Main Dashboard Split Layout -->
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         
-        <!-- Left Profile Column -->
+        <!-- Profile & Permissions Card -->
         <div class="lg:col-span-1 space-y-6">
             <div class="bg-white border border-gray-200 shadow-sm p-6 sharp-border text-center">
                 <div class="w-24 h-24 bg-magenta text-white text-3xl font-bold font-poppins flex items-center justify-center sharp-border shadow-md mx-auto mb-4">
                     {{ user.username[0] | upper if user.username else 'T' }}
                 </div>
                 <h3 class="font-poppins font-bold text-gray-800 text-lg leading-tight">{{ user.username }}</h3>
-                <span class="text-[10px] text-gray-400 uppercase tracking-widest font-bold block mt-1">Contributor</span>
+                <span class="text-[10px] {% if user.is_admin %}bg-red-50 text-orangered border border-red-100{% else %}bg-purple-50 text-magenta border border-purple-100{% endif %} px-2.5 py-0.5 rounded uppercase tracking-widest font-bold inline-block mt-2">
+                    {% if user.is_admin %}Administrator{% else %}Contributor{% endif %}
+                </span>
                 
                 <p class="text-xs text-gray-500 mt-4 leading-relaxed italic border-t border-b border-gray-100 py-3">
                     {{ user.bio or 'TUNU Educational writer specializing in active research, CBC revisions, language aids, and African stories.' }}
@@ -45,27 +73,26 @@
                 </div>
             </div>
 
-            <!-- Quick Help Assistance Box -->
             <div class="bg-gray-50 border border-gray-200 p-6 sharp-border">
                 <h4 class="font-poppins font-bold text-sm text-darkmagenta uppercase mb-3 flex items-center gap-2">
-                    <i class="fas fa-life-ring text-orangered"></i> Publisher Help
+                    <i class="fas fa-shield-alt text-orangered"></i> Publishing Rules
                 </h4>
                 <p class="text-xs text-gray-600 leading-relaxed mb-3">
-                    Need assistance getting your CBC textbook review approved or editing your manuscripts? Contact our editorial helpdesk.
+                    To maintain strict KICD educational compliance and coordinate accurate CBC syllabus guidelines, article publishing access is restricted to verified administrators.
                 </p>
-                <a href="https://wa.me/254722682129" target="_blank" class="text-xs font-bold text-magenta hover:text-orangered transition-colors flex items-center gap-1.5">
-                    <i class="fab fa-whatsapp"></i> Chat Support <i class="fas fa-arrow-right text-[10px]"></i>
-                </a>
+                {% if not user.is_admin %}
+                <div class="bg-orange-50 border-l-2 border-orangered p-2 text-[11px] text-orange-800 rounded">
+                    Your account is set to Reader mode. If you need writing authorization, contact editorial.
+                </div>
+                {% endif %}
             </div>
         </div>
 
-        <!-- Right Content Column -->
         <div class="lg:col-span-3 space-y-8">
             
-            <!-- Metrics Statistics Bar -->
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 
-                <div class="bg-white border border-gray-200 p-5 shadow-sm sharp-border flex items-center gap-4">
+                <div class="bg-white border border-gray-200 p-5 shadow-sm sharp-border flex items-center gap-4 dashboard-card">
                     <div class="w-12 h-12 bg-pink-50 text-magenta flex items-center justify-center text-lg sharp-border shrink-0">
                         <i class="fas fa-book"></i>
                     </div>
@@ -75,7 +102,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white border border-gray-200 p-5 shadow-sm sharp-border flex items-center gap-4">
+                <div class="bg-white border border-gray-200 p-5 shadow-sm sharp-border flex items-center gap-4 dashboard-card">
                     <div class="w-12 h-12 bg-orange-50 text-orangered flex items-center justify-center text-lg sharp-border shrink-0">
                         <i class="fas fa-eye"></i>
                     </div>
@@ -91,7 +118,7 @@
                     </div>
                 </div>
 
-                <div class="bg-white border border-gray-200 p-5 shadow-sm sharp-border flex items-center gap-4 col-span-2 sm:col-span-1">
+                <div class="bg-white border border-gray-200 p-5 shadow-sm sharp-border flex items-center gap-4 col-span-2 sm:col-span-1 dashboard-card">
                     <div class="w-12 h-12 bg-purple-50 text-purple-700 flex items-center justify-center text-lg sharp-border shrink-0">
                         <i class="fas fa-heart"></i>
                     </div>
@@ -109,17 +136,19 @@
                 
             </div>
 
-            <!-- Active Drafts and Publications -->
             <div class="bg-white border border-gray-200 shadow-sm p-6 sm:p-8 sharp-border">
                 <h3 class="font-poppins font-bold text-gray-800 text-lg mb-6 border-b pb-3 flex justify-between items-center">
-                    <span class="flex items-center gap-2"><i class="far fa-folder-open text-magenta"></i> My Literary Publications</span>
-                    <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 font-bold sharp-border-sm">{{ posts | length }} Posts</span>
+                    <span class="flex items-center gap-2">
+                        <i class="far fa-folder-open text-magenta"></i> 
+                        {% if user.is_admin %}All Literary Publications{% else %}My Literary Publications{% endif %}
+                    </span>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-3 py-1 font-bold sharp-border-sm">{{ posts | length }} Articles</span>
                 </h3>
 
                 <div class="space-y-4">
                     {% for p in posts %}
-                    <div class="border border-gray-100 hover:border-magenta p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-colors sharp-border">
-                        <div>
+                    <div class="border border-gray-100 hover:border-magenta p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors sharp-border">
+                        <div class="flex-grow">
                             <span class="bg-magenta/10 text-magenta text-[9px] uppercase font-extrabold px-2 py-0.5 sharp-border-sm inline-block mb-1.5">{{ p.category or 'General' }}</span>
                             <h4 class="font-bold text-gray-800 leading-snug text-base hover:text-magenta transition-colors">
                                 <a href="/post/{{ p.id }}">{{ p.title }}</a>
@@ -133,10 +162,19 @@
                             </div>
                         </div>
                         
-                        <div class="flex items-center gap-2 w-full sm:w-auto self-stretch sm:self-center">
-                            <a href="/post/{{ p.id }}" class="flex-1 sm:flex-initial text-center bg-gray-50 hover:bg-magenta hover:text-white border border-gray-200 hover:border-magenta text-gray-700 font-bold py-2 px-4 text-xs uppercase transition-all sharp-border">
-                                Open
+                        <!-- Article Control Panel Column -->
+                        <div class="flex items-center gap-2 w-full md:w-auto self-stretch md:self-center">
+                            <a href="/post/{{ p.id }}" class="flex-1 md:flex-initial text-center bg-gray-50 hover:bg-magenta hover:text-white border border-gray-200 hover:border-magenta text-gray-700 font-bold py-2 px-4 text-xs uppercase transition-all sharp-border">
+                                <i class="fas fa-external-link-alt mr-1"></i> Open
                             </a>
+                            {% if user.is_admin %}
+                            <a href="/edit/{{ p.id }}" class="flex-1 md:flex-initial text-center bg-slate-50 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold py-2 px-4 text-xs uppercase transition-all sharp-border">
+                                <i class="fas fa-edit mr-1"></i> Edit
+                            </a>
+                            <button onclick="triggerDeleteConfirmation('{{ p.id }}', '{{ p.title|escape }}')" type="button" class="flex-1 md:flex-initial text-center bg-red-50 hover:bg-red-600 hover:text-white border border-red-200 hover:border-red-600 text-red-600 font-bold py-2 px-4 text-xs uppercase transition-all sharp-border">
+                                <i class="fas fa-trash-alt mr-1"></i> Delete
+                            </button>
+                            {% endif %}
                         </div>
                     </div>
                     {% else %}
@@ -144,11 +182,13 @@
                         <i class="fas fa-book-open text-gray-300 text-5xl mb-4 block"></i>
                         <h4 class="font-poppins font-bold text-gray-700 text-lg">No Publications Found</h4>
                         <p class="text-xs text-gray-400 mt-1 max-w-sm mx-auto mb-6">
-                            You haven't added any revision outlines, educational insights, or storybook critiques to the platform yet.
+                            There are currently no active revision guides, stories, or language reference articles on the platform.
                         </p>
+                        {% if user.is_admin %}
                         <a href="/create" class="bg-magenta hover:bg-darkmagenta text-white font-bold py-2.5 px-6 text-xs uppercase tracking-wider transition-colors sharp-border inline-block">
                             Draft Your First Post
                         </a>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>
@@ -159,4 +199,44 @@
     </div>
     
 </div>
+
+<div id="delete-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white border border-gray-200 max-w-md w-full p-6 sharp-border shadow-2xl relative animate-[fadeIn_0.2s_ease-out]">
+        
+        <button type="button" onclick="closeDeleteModal()" class="absolute top-4 right-4 text-gray-400 hover:text-magenta text-xl">
+            <i class="fas fa-times-circle"></i>
+        </button>
+        
+        <h3 class="font-poppins font-bold text-darkmagenta text-base uppercase mb-2 flex items-center gap-2">
+            <i class="fas fa-exclamation-triangle text-orangered"></i> Confirm Deletion
+        </h3>
+        
+        <p class="text-xs text-gray-500 leading-relaxed mb-6">
+            Are you absolutely sure you want to permanently delete the article: <span id="delete-article-title" class="font-bold text-gray-800 italic">"Untitled"</span>? This action cannot be undone and will erase all comments and stats metrics.
+        </p>
+        
+        <form id="delete-modal-form" method="POST" action="" class="flex justify-end gap-2">
+            <button type="button" onclick="closeDeleteModal()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold uppercase py-2.5 px-4 sharp-border">
+                Cancel
+            </button>
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase py-2.5 px-5 sharp-border shadow">
+                Delete Post
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function triggerDeleteConfirmation(articleId, articleTitle) {
+        document.getElementById('delete-article-title').innerText = '"' + articleTitle + '"';
+        document.getElementById('delete-modal-form').action = "/delete/" + articleId;
+        document.getElementById('delete-modal').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('delete-modal').classList.add('hidden');
+    }
+</script>
 {% endblock %}

@@ -13,7 +13,7 @@
     <!-- Robots -->
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
-    
+
     {% block meta %}
 
     <!-- Open Graph -->
@@ -263,7 +263,7 @@
                 <a href="/books?cat=revision" class="hover:bg-orangered text-white px-4 py-2 font-medium uppercase text-xs tracking-wider transition-colors sharp-border">Revision</a>
                 <a href="/about" class="hover:bg-orangered text-white px-4 py-2 font-medium uppercase text-xs tracking-wider transition-colors sharp-border">About Us</a>
                 <a href="/blog" class="hover:bg-orangered text-white px-4 py-2 font-medium uppercase text-xs tracking-wider transition-colors sharp-border">Blog Zone</a>
-                {% if session.get('uid') %}
+                {% if user and user.role in ['creator', 'admin'] %}
                     <a href="/dashboard" class="hover:bg-orangered text-white px-4 py-2 font-medium uppercase text-xs tracking-wider transition-colors sharp-border">Dashboard</a>
                     <a href="/logout" class="hover:bg-orangered text-white px-4 py-2 font-medium uppercase text-xs tracking-wider transition-colors sharp-border">Logout</a>
                 {% else %}
