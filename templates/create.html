@@ -10,7 +10,6 @@
 
 {% block styles %}
 <style>
-    /* Custom style variables to override and support contenteditable placeholder properties */
     .editor-container [contenteditable="true"]:empty:before {
         content: attr(placeholder);
         color: #9ca3af;
@@ -30,7 +29,7 @@
         background-color: var(--dark-magenta);
         color: white;
     }
-    /* Ensure lists render properly in edit area */
+    /* Set custom styles for lists inside the content editor */
     .edit-area ul {
         list-style-type: disc;
         padding-left: 1.5rem;
@@ -63,23 +62,34 @@
         text-decoration: underline;
         font-weight: 500;
     }
+    /* Beautiful faded magenta styling for quoted texts */
+    .edit-area blockquote {
+        background-color: rgba(139, 0, 139, 0.06) !important;
+        border-left: 4px solid #8B008B !important;
+        padding: 1rem 1.25rem !important;
+        margin: 1.5rem 0 !important;
+        font-style: italic !important;
+        color: #4b5563 !important;
+        border-radius: 0 4px 4px 0 !important;
+        line-height: 1.7 !important;
+    }
+    #editor-context-menu {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 py-10">
 
-    <!-- Header Navigation Map -->
     <div class="flex items-center gap-2 text-xs text-gray-500 mb-6 bg-white p-3 border border-gray-100 sharp-border">
         <a href="/dashboard" class="hover:text-magenta transition-colors">Dashboard</a>
         <i class="fas fa-chevron-right text-[8px]"></i>
         <span class="text-gray-800 font-medium">Write New Article</span>
     </div>
 
-    <!-- Main Form Workspace -->
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         
-        <!-- Left Side: Main Rich Text Form Column -->
         <div class="lg:col-span-3 space-y-6">
             <div class="bg-white border border-gray-200 shadow-sm p-6 sm:p-8 sharp-border">
                 
@@ -89,7 +99,6 @@
                         <p class="text-xs text-gray-400 mt-1">Draft educational reviews, creative scripts, or revision guides aligned with KICD standards.</p>
                     </div>
                     <div class="flex gap-2">
-                        <!-- Dynamic View Switcher -->
                         <button type="button" onclick="toggleWorkspaceMode('edit')" id="mode-edit-btn" class="bg-magenta text-white text-xs uppercase tracking-wider font-bold py-2 px-4 transition-all sharp-border shadow-sm">
                             <i class="fas fa-edit mr-1"></i> Editor
                         </button>
@@ -99,13 +108,10 @@
                     </div>
                 </div>
 
-                <!-- Flask Creation Form Context with Multipart file configuration support -->
                 <form id="article-creation-form" method="POST" action="/create" enctype="multipart/form-data" onsubmit="syncEditorContent()" class="space-y-5">
                     
-                    <!-- EDIT MODE WORKSPACE -->
                     <div id="editor-workspace" class="space-y-5">
                         
-                        <!-- Title and Category Row -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div class="md:col-span-2">
                                 <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Article Title *</label>
@@ -124,20 +130,17 @@
                             </div>
                         </div>
 
-                        <!-- Cover Image Drag and Drop Container -->
                         <div>
                             <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">Cover Image *</label>
                             <div id="image-drop-zone" class="border-2 border-dashed border-gray-200 hover:border-magenta transition-colors bg-gray-50/30 p-6 text-center cursor-pointer sharp-border relative">
                                 <input type="file" name="cover_image" id="cover-image-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="previewImageFile(event)">
                                 
-                                <!-- Empty state uploader graphics -->
                                 <div id="uploader-prompt" class="space-y-2">
                                     <i class="fas fa-image text-3xl text-gray-400"></i>
                                     <p class="text-xs text-gray-600 font-semibold">Drag and drop an article cover image here, or <span class="text-magenta">browse files</span></p>
                                     <p class="text-[10px] text-gray-400">Supports PNG, JPG, JPEG, WEBP files up to 5MB</p>
                                 </div>
 
-                                <!-- Dynamic image rendering placeholder -->
                                 <div id="preview-image-container" class="hidden relative inline-block max-h-64 mx-auto overflow-hidden">
                                     <img id="upload-preview-thumbnail" src="" class="max-h-60 object-contain mx-auto sharp-border border" alt="Cover preview">
                                     <button type="button" onclick="resetCoverImage(event)" class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white text-xs py-1 px-2.5 sharp-border shadow flex items-center gap-1">
@@ -147,7 +150,6 @@
                             </div>
                         </div>
 
-                        <!-- Brief Summary Block -->
                         <div>
                             <div class="flex justify-between items-center mb-1.5">
                                 <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-500">Summary Introduction *</label>
@@ -158,9 +160,7 @@
                                       class="w-full text-xs px-4 py-3 border border-gray-200 focus:border-magenta outline-none bg-gray-50/50 sharp-border resize-none leading-relaxed"></textarea>
                         </div>
 
-                        <!-- Rich Text WYSIWYG Editor Block -->
                         <div class="editor-container border border-gray-200 sharp-border overflow-hidden">
-                            <!-- Editing Utility Toolbar -->
                             <div class="bg-gray-50 border-b border-gray-200 p-2 flex flex-wrap gap-1 items-center">
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('bold')" title="Bold text" class="editor-btn w-8 h-8 flex items-center justify-center text-sm text-gray-600 sharp-border"><i class="fas fa-bold"></i></button>
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('italic')" title="Italic text" class="editor-btn w-8 h-8 flex items-center justify-center text-sm text-gray-600 sharp-border"><i class="fas fa-italic"></i></button>
@@ -169,6 +169,7 @@
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('formatBlock', 'h2')" title="Header 2" class="editor-btn px-2 h-8 flex items-center justify-center text-xs font-bold text-gray-600 sharp-border">H2</button>
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('formatBlock', 'h3')" title="Header 3" class="editor-btn px-2 h-8 flex items-center justify-center text-xs font-bold text-gray-600 sharp-border">H3</button>
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('formatBlock', 'p')" title="Paragraph" class="editor-btn px-2 h-8 flex items-center justify-center text-xs text-gray-600 sharp-border">P</button>
+                                <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('formatBlock', 'blockquote')" title="Quoted Text" class="editor-btn w-8 h-8 flex items-center justify-center text-sm text-gray-600 sharp-border"><i class="fas fa-quote-left"></i></button>
                                 <div class="w-px h-6 bg-gray-300 mx-1"></div>
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('insertUnorderedList')" title="Bullet list" class="editor-btn w-8 h-8 flex items-center justify-center text-sm text-gray-600 sharp-border"><i class="fas fa-list-ul"></i></button>
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('insertOrderedList')" title="Numbered list" class="editor-btn w-8 h-8 flex items-center justify-center text-sm text-gray-600 sharp-border"><i class="fas fa-list-ol"></i></button>
@@ -180,23 +181,19 @@
                                 <button type="button" onmousedown="event.preventDefault();" onclick="formatDoc('removeFormat')" title="Clear formatting" class="editor-btn w-8 h-8 flex items-center justify-center text-sm text-red-500 sharp-border"><i class="fas fa-eraser"></i></button>
                             </div>
 
-                            <!-- Editable content area -->
                             <div id="wysiwyg-editor" contenteditable="true" placeholder="Begin composing your brilliant article content here..." 
                                  onkeyup="updateWordCount()" class="edit-area min-h-[400px] max-h-[600px] overflow-y-auto p-5 text-sm outline-none bg-white text-gray-700 leading-relaxed"></div>
                         </div>
 
-                        <!-- Real-time word count details -->
                         <div class="flex justify-between items-center text-[10px] text-gray-400 font-bold uppercase tracking-wider">
                             <span>Format options: Highlight text and click tool controls</span>
                             <span id="word-counter">0 words</span>
                         </div>
                     </div>
 
-                    <!-- PREVIEW MODE WORKSPACE (Hidden by default) -->
                     <div id="preview-workspace" class="hidden min-h-[500px] bg-slate-50 p-6 border border-gray-200 sharp-border">
                         <div class="prose max-w-none">
                             
-                            <!-- Header dynamic image preview -->
                             <div id="preview-cover-container" class="hidden mb-6 h-64 sm:h-96 w-full relative bg-gray-100 overflow-hidden sharp-border border">
                                 <img id="preview-cover-img" src="" class="w-full h-full object-cover" alt="Article Cover">
                             </div>
@@ -209,15 +206,13 @@
                                 <span>&bull;</span>
                                 <span>Just Now</span>
                             </div>
-                            <blockquote id="preview-summary" class="text-sm italic text-gray-500 border-l-4 border-magenta pl-4 mb-6 leading-relaxed">This post does not contain an active summary yet.</blockquote>
+                            <blockquote id="preview-summary" class="text-sm italic text-gray-500 border-l-4 border-magenta bg-magenta/5 p-4 mb-6 leading-relaxed sharp-border">This post does not contain an active summary yet.</blockquote>
                             <div id="preview-content" class="edit-area text-sm text-gray-700 leading-relaxed">This post does not contain active content yet.</div>
                         </div>
                     </div>
 
-                    <!-- Hidden payload field for Form Post submission -->
                     <input type="hidden" name="content" id="hidden-content">
 
-                    <!-- Form submission controls -->
                     <div class="pt-4 border-t border-gray-100 flex justify-between items-center gap-4">
                         <a href="/dashboard" class="text-xs font-bold text-gray-500 hover:text-magenta uppercase tracking-wider transition-colors flex items-center gap-1.5">
                             <i class="fas fa-arrow-left"></i> Discard and Exit
@@ -232,10 +227,8 @@
             </div>
         </div>
 
-        <!-- Right Side: Author Sidebar Context -->
         <div class="lg:col-span-1 space-y-6">
             
-            <!-- Quality Control Checklist -->
             <div class="bg-white border border-gray-200 p-6 sharp-border shadow-sm">
                 <h4 class="font-poppins font-bold text-sm text-darkmagenta uppercase mb-4 border-b pb-2 flex items-center gap-2">
                     <i class="fas fa-clipboard-check text-magenta"></i> Editor Check
@@ -260,7 +253,6 @@
                 </ul>
             </div>
 
-            <!-- "Elimu ni Tunu" Philosophy Promotion -->
             <div class="bg-gradient-to-br from-magenta to-darkmagenta text-white p-6 shadow-sm sharp-border relative overflow-hidden">
                 <div class="absolute -right-8 -bottom-8 opacity-10 text-[120px] pointer-events-none transform rotate-12">
                     <i class="fas fa-feather-alt"></i>
@@ -279,7 +271,6 @@
 
 </div>
 
-<!-- Inline Hyperlink Modal Interface -->
 <div id="link-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white border border-gray-200 max-w-md w-full p-6 sharp-border shadow-2xl relative animate-[fadeIn_0.2s_ease-out]">
         <button type="button" onclick="closeLinkModal()" class="absolute top-4 right-4 text-gray-400 hover:text-magenta text-xl">
@@ -305,7 +296,6 @@
     </div>
 </div>
 
-<!-- Inline Image Modal Interface -->
 <div id="image-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white border border-gray-200 max-w-md w-full p-6 sharp-border shadow-2xl relative animate-[fadeIn_0.2s_ease-out]">
         <button type="button" onclick="closeImageModal()" class="absolute top-4 right-4 text-gray-400 hover:text-magenta text-xl">
@@ -315,25 +305,21 @@
             <i class="fas fa-file-image text-orangered"></i> Insert Inline Image
         </h3>
         <div class="space-y-4">
-            <!-- Source Selector Tabs -->
             <div class="flex border-b border-gray-100 pb-2 mb-2 gap-4">
                 <button type="button" onclick="toggleImageSource('upload')" id="img-tab-upload" class="text-xs font-bold uppercase tracking-wider text-magenta border-b-2 border-magenta pb-1">Upload File</button>
                 <button type="button" onclick="toggleImageSource('url')" id="img-tab-url" class="text-xs font-bold uppercase tracking-wider text-gray-400 pb-1">Image URL</button>
             </div>
             
-            <!-- Upload Block -->
             <div id="img-upload-section" class="space-y-3">
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Select Local Image File</label>
                 <input type="file" id="modal-image-file" accept="image/*" class="w-full text-xs px-3 py-2 border border-gray-200 focus:border-magenta outline-none bg-gray-50/50 sharp-border">
             </div>
 
-            <!-- URL Input Block -->
             <div id="img-url-section" class="space-y-3 hidden">
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Image URL Address (include https://)</label>
                 <input type="url" id="modal-image-url" placeholder="https://example.com/image.webp" class="w-full text-xs px-3 py-2.5 border border-gray-200 focus:border-magenta outline-none bg-gray-50/50 sharp-border">
             </div>
 
-            <!-- Geometry Options -->
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">Relative Width (%)</label>
@@ -356,23 +342,43 @@
         </div>
     </div>
 </div>
+
+<div id="editor-context-menu" class="fixed hidden z-[100] bg-white border border-gray-200 shadow-xl py-1 text-xs text-gray-700 flex flex-col w-48 sharp-border">
+    <button type="button" onclick="executeContextAction('bold')" class="flex items-center gap-2.5 px-3 py-2 hover:bg-magenta hover:text-white transition-colors text-left font-bold">
+        <i class="fas fa-bold w-4 text-center text-magenta hover:text-inherit"></i> Bold Selection
+    </button>
+    <button type="button" onclick="executeContextAction('italic')" class="flex items-center gap-2.5 px-3 py-2 hover:bg-magenta hover:text-white transition-colors text-left">
+        <i class="fas fa-italic w-4 text-center"></i> Italicize Selection
+    </button>
+    <button type="button" onclick="executeContextAction('underline')" class="flex items-center gap-2.5 px-3 py-2 hover:bg-magenta hover:text-white transition-colors text-left">
+        <i class="fas fa-underline w-4 text-center"></i> Underline Selection
+    </button>
+    <div class="border-t border-gray-100 my-1"></div>
+    <button type="button" onclick="triggerContextLink()" class="flex items-center gap-2.5 px-3 py-2 hover:bg-magenta hover:text-white transition-colors text-left font-semibold text-darkmagenta">
+        <i class="fas fa-link w-4 text-center text-orangered"></i> Add Web Link
+    </button>
+    <button type="button" onclick="triggerContextImage()" class="flex items-center gap-2.5 px-3 py-2 hover:bg-magenta hover:text-white transition-colors text-left font-semibold text-darkmagenta">
+        <i class="fas fa-image w-4 text-center text-orangered"></i> Insert Inline Image
+    </button>
+    <div class="border-t border-gray-100 my-1"></div>
+    <button type="button" onclick="executeContextAction('removeFormat')" class="flex items-center gap-2.5 px-3 py-2 hover:bg-magenta hover:text-white transition-colors text-left text-red-600 hover:text-white font-medium">
+        <i class="fas fa-eraser w-4 text-center"></i> Clear Formatting
+    </button>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    // Selection caching variable to prevent losing highlight target position on popup
     let savedSelectionRange = null;
 
     window.addEventListener('DOMContentLoaded', () => {
         const editor = document.getElementById('wysiwyg-editor');
         editor.focus();
 
-        // Continuously keep track of the selection position within editor container boundaries
         ['keyup', 'mouseup', 'selectionchange'].forEach(eventType => {
             document.addEventListener(eventType, saveSelectionPointer);
         });
         
-        // Drag over animations for files
         const dropZone = document.getElementById('image-drop-zone');
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -391,9 +397,26 @@
                 renderFilePreview(files[0]);
             }
         });
+
+        if (editor) {
+            editor.addEventListener('mouseup', handleEditorSelection);
+            editor.addEventListener('keyup', handleEditorSelection);
+
+            editor.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                saveSelectionPointer();
+                showContextMenu(e.clientX, e.clientY);
+            });
+        }
+
+        document.addEventListener('mousedown', (e) => {
+            const menu = document.getElementById('editor-context-menu');
+            if (menu && !menu.contains(e.target) && !editor.contains(e.target)) {
+                hideContextMenu();
+            }
+        });
     });
 
-    // Capture the range inside the editor
     function saveSelectionPointer() {
         const sel = window.getSelection();
         if (sel.rangeCount > 0) {
@@ -405,15 +428,12 @@
         }
     }
 
-    // Execute safe inline design tools
     function formatDoc(command, value = null) {
         document.execCommand(command, false, value);
         document.getElementById('wysiwyg-editor').focus();
     }
 
-    // Modal view triggers
     function openLinkModal() {
-        // Force evaluation of selection right before action
         saveSelectionPointer();
         
         let selectedText = '';
@@ -434,7 +454,6 @@
         document.getElementById('link-modal').classList.add('hidden');
     }
 
-    // Insert hyperlink directly over captured node index pointer
     function insertHyperlink() {
         const linkText = document.getElementById('modal-link-text').value.trim();
         const linkUrl = document.getElementById('modal-link-url').value.trim();
@@ -450,28 +469,23 @@
 
         const sel = window.getSelection();
         
-        // Restore precise caret highlight selection
         if (savedSelectionRange) {
             sel.removeAllRanges();
             sel.addRange(savedSelectionRange);
         }
 
-        // Generate clean anchor element node
         const anchor = document.createElement('a');
         anchor.href = linkUrl;
         anchor.target = '_blank';
         anchor.className = "text-magenta hover:text-darkmagenta font-medium underline transition-colors";
         
-        // Evaluate display configurations
         const textToDisplay = linkText || sel.toString() || linkUrl;
         anchor.innerText = textToDisplay;
 
-        // Apply clean direct node injection avoiding legacy command crashes
         if (savedSelectionRange) {
             savedSelectionRange.deleteContents();
             savedSelectionRange.insertNode(anchor);
             
-            // Re-collapse cursor to the end of inserted anchor element node so user keeps composing smoothly
             const nextRange = document.createRange();
             nextRange.setStartAfter(anchor);
             nextRange.collapse(true);
@@ -481,7 +495,6 @@
             editor.appendChild(anchor);
         }
         
-        // Flush internal selection pointer cached status
         savedSelectionRange = null;
         updateWordCount();
     }
@@ -498,7 +511,6 @@
     function closeImageModal() {
         document.getElementById('image-modal').classList.add('hidden');
     }
-
 
     function toggleImageSource(source) {
         activeImageSource = source;
@@ -532,7 +544,6 @@
             sel.addRange(savedSelectionRange);
         }
 
-        // Generate customized responsive image node
         const img = document.createElement('img');
         img.className = `${align} max-w-full my-4 shadow-sm border border-gray-100 transition-transform`;
         img.style.width = width + '%';
@@ -584,14 +595,12 @@
         }
     }
 
-
     function injectNodeAtCaret(node) {
         const sel = window.getSelection();
         if (savedSelectionRange) {
             savedSelectionRange.deleteContents();
             savedSelectionRange.insertNode(node);
             
-            // Generate clean spacing paragraph node after insertion for text editing convenience
             const spaceParagraph = document.createElement('p');
             spaceParagraph.innerHTML = '<br>';
             node.parentNode.insertBefore(spaceParagraph, node.nextSibling);
@@ -612,7 +621,6 @@
         updateWordCount();
     }
 
-    // Dynamic Image upload and reader file uploader interface
     function previewImageFile(event) {
         const files = event.target.files;
         if (files && files[0]) {
@@ -640,14 +648,12 @@
         document.getElementById('uploader-prompt').classList.remove('hidden');
     }
 
-    // Synchronization utility: Copies editor content to hidden element before Post
     function syncEditorContent() {
         const editor = document.getElementById('wysiwyg-editor');
         const input = document.getElementById('hidden-content');
         input.value = editor.innerHTML;
     }
 
-    // Dynamic Live Preview updates
     function toggleWorkspaceMode(mode) {
         const editTab = document.getElementById('mode-edit-btn');
         const previewTab = document.getElementById('mode-preview-btn');
@@ -655,11 +661,9 @@
         const previewWorkspace = document.getElementById('preview-workspace');
 
         if (mode === 'preview') {
-            // Highlight Preview Mode
             editTab.className = "bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs uppercase tracking-wider font-bold py-2 px-4 border border-gray-200 transition-all sharp-border";
             previewTab.className = "bg-magenta text-white text-xs uppercase tracking-wider font-bold py-2 px-4 transition-all sharp-border shadow-sm";
             
-            // Build elements
             const titleInput = document.querySelector('input[name="title"]').value;
             const categorySelect = document.querySelector('select[name="category"]').value;
             const summaryInput = document.querySelector('textarea[name="summary"]').value;
@@ -671,7 +675,6 @@
             document.getElementById('preview-summary').innerText = summaryInput.trim() || 'This post does not contain an active summary yet.';
             document.getElementById('preview-content').innerHTML = editorContent.trim() || '<p class="text-gray-400 italic">This post does not contain active content yet.</p>';
 
-            // Load Preview cover image if attached
             const imagePreviewContainer = document.getElementById('preview-cover-container');
             if (imageBlob) {
                 document.getElementById('preview-cover-img').src = imageBlob;
@@ -683,7 +686,6 @@
             editWorkspace.classList.add('hidden');
             previewWorkspace.classList.remove('hidden');
         } else {
-            // Highlight Edit Mode
             previewTab.className = "bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs uppercase tracking-wider font-bold py-2 px-4 border border-gray-200 transition-all sharp-border";
             editTab.className = "bg-magenta text-white text-xs uppercase tracking-wider font-bold py-2 px-4 transition-all sharp-border shadow-sm";
             
@@ -692,7 +694,6 @@
         }
     }
 
-    // Word and Character counters
     function updateCharCounters() {
         const summary = document.querySelector('textarea[name="summary"]');
         const counter = document.getElementById('summary-counter');
@@ -705,6 +706,80 @@
         const text = editor.innerText || editor.textContent;
         const words = text.trim().split(/\s+/).filter(word => word.length > 0);
         counter.innerText = `${words.length} words`;
+    }
+
+    function handleEditorSelection() {
+        const sel = window.getSelection();
+        const editor = document.getElementById('wysiwyg-editor');
+        
+        if (sel.rangeCount > 0) {
+            const range = sel.getRangeAt(0);
+            const text = sel.toString().trim();
+            
+            if (text.length > 0 && editor.contains(range.commonAncestorContainer)) {
+                savedSelectionRange = range.cloneRange();
+                const rect = range.getBoundingClientRect();
+                const middleX = rect.left + (rect.width / 2) - 96;
+                const bottomY = rect.bottom + window.scrollY + 5;
+                showContextMenu(middleX, bottomY);
+                return;
+            }
+        }
+        hideContextMenu();
+    }
+
+    function showContextMenu(clientX, clientY) {
+        const menu = document.getElementById('editor-context-menu');
+        if (menu) {
+            const menuWidth = 192;
+            const menuHeight = 230;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            let safeX = Math.min(clientX, viewportWidth - menuWidth - 10);
+            safeX = Math.max(10, safeX);
+
+            let safeY = Math.min(clientY, viewportHeight - menuHeight - 10);
+            safeY = Math.max(10, safeY);
+            
+            menu.style.left = `${safeX}px`;
+            menu.style.top = `${safeY}px`;
+            menu.classList.remove('hidden');
+        }
+    }
+
+    function hideContextMenu() {
+        const menu = document.getElementById('editor-context-menu');
+        if (menu) {
+            menu.classList.add('hidden');
+        }
+    }
+
+    function executeContextAction(command) {
+        restoreSelection();
+        document.execCommand(command, false, null);
+        updateWordCount();
+        hideContextMenu();
+    }
+
+    function triggerContextLink() {
+        restoreSelection();
+        openLinkModal();
+        hideContextMenu();
+    }
+
+    function triggerContextImage() {
+        restoreSelection();
+        openImageModal();
+        hideContextMenu();
+    }
+
+    function restoreSelection() {
+        const sel = window.getSelection();
+        if (savedSelectionRange) {
+            sel.removeAllRanges();
+            sel.addRange(savedSelectionRange);
+        }
     }
 </script>
 {% endblock %}
