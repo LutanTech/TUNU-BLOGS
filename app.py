@@ -1,11 +1,27 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
-from models import db, User, BlogPost, Comment, PostLike, Bookmark
+import os
+import re
+import uuid
+
+from flask import Flask, flash, redirect, render_template, request, session, url_for
+from werkzeug.utils import secure_filename
+
+from models import BlogPost, Bookmark, Comment, PostLike, User, db
 from utils import generate_unique_slug
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+UPLOAD_FOLDER = os.path.join('static', 'uploads')
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'jfif', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 db.init_app(app)
 
@@ -54,18 +70,34 @@ def dashboard():
     posts = BlogPost.query.filter_by(user_id=u.id).all()
     return render_template('dashboard.html', user=u, posts=posts)
 
+
 @app.route('/create', methods=['GET','POST'])
 def create():
     if 'uid' not in session:
         return redirect(url_for('login'))
+
     if request.method == 'POST':
         title = request.form['title']
-
         slug = generate_unique_slug(db, BlogPost, title)
+
+        cover_image_url = None
+
+        if 'cover_image' in request.files:
+            file = request.files['cover_image']
+
+            if file and file.filename != '' and allowed_file(file.filename):
+                ext = file.filename.rsplit('.', 1)[1].lower()
+                filename = f"{slug}.{ext}"
+
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                cover_image_url = f"/static/uploads/{filename}"
 
         p = BlogPost(
             title=title,
             summary=request.form['summary'],
+            cover_image=cover_image_url,
             content=request.form['content'],
             category=request.form['category'],
             slug=slug,
@@ -74,8 +106,29 @@ def create():
 
         db.session.add(p)
         db.session.commit()
+
         return redirect(url_for('dashboard'))
+
     return render_template('create.html')
+
+@app.route('/upload-inline', methods=['POST'])
+def upload_inline():
+    """AJAX endpoint for uploading rich-text inline images."""
+    if 'uid' not in session:
+        return {'error': 'Authentication required'}, 401
+        
+    if 'image' not in request.files:
+        return {'error': 'No file uploaded'}, 400
+        
+    file = request.files['image']
+    if file and file.filename != '' and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filename = f"{uuid.uuid4().hex}_{filename}"
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return {'url': f"/static/uploads/{filename}"}
+        
+    return {'error': 'Invalid file format'}, 400
 
 @app.route('/post/<string:slug>')
 def post(slug):

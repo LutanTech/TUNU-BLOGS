@@ -6,6 +6,20 @@
 <meta name="title" content="{{ post.title }} | TUNU Publishers">
 <meta name="description" content="{{ post.summary or 'Read the latest post from the TUNU Publishers Blog Zone.' }}">
 <meta name="keywords" content="TUNU Publishers, Blog, Elimu ni Tunu, {{ post.category or 'Education' }}">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="{{ post.title }} | TUNU Publishers">
+<meta property="og:description" content="{{ post.summary or 'Read the latest post from the TUNU Publishers Blog Zone.' }}">
+<meta property="og:url" content="{{ request.url }}">
+<meta property="og:image" content="{{ request.host_url[:-1] }}{{ post.cover_image }}">
+<meta property="og:site_name" content="TUNU Publishers">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ post.title }} | TUNU Publishers">
+<meta name="twitter:description" content="{{ post.summary or 'Read the latest post from the TUNU Publishers Blog Zone.' }}">
+<meta name="twitter:image" content="{{ request.host_url[:-1] }}{{ post.cover_image }}">
+
+<link rel="canonical" href="{{ request.url }}">
 {% endblock %}
 
 {% block styles %}
