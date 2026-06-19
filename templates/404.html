@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found | TUNU Publishers | Elimu ni Tunu{% endblock %}
+
+{% block styles %}
+<style>
+    .sharp-border {
+        border-radius: 4px !important;
+    }
+    .hover-translate {
+        transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+    .hover-translate:hover {
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-16 flex items-center justify-center min-h-[70vh]">
+    <div class="bg-white border border-gray-200 shadow-xl p-8 sm:p-12 text-center sharp-border max-w-2xl relative overflow-hidden">
+        
+        <div class="absolute -right-16 -bottom-16 opacity-5 text-[200px] pointer-events-none transform rotate-12 text-darkmagenta">
+            <i class="fas fa-book-open"></i>
+        </div>
+
+        <div class="mb-6 inline-flex items-center justify-center w-24 h-24 bg-pink-50 text-magenta sharp-border shadow-inner">
+            <i class="fas fa-unlink text-4xl"></i>
+        </div>
+
+        <span class="text-[10px] bg-orangered text-white uppercase font-extrabold tracking-widest px-3 py-1 sharp-border inline-block mb-4">
+            Mtafutaji Hachoki (404 Error)
+        </span>
+        
+        <h2 class="font-poppins font-extrabold text-3xl sm:text-4xl text-darkmagenta mb-3 leading-tight">
+            Ukurasa Haupatikani
+        </h2>
+        
+        <p class="text-sm text-gray-500 max-w-md mx-auto leading-relaxed mb-8">
+            The page you are looking for does not exist or has been relocated within our educational database.
+        </p>
+
+        <div class="bg-gray-50 border border-gray-100 p-5 sharp-border mb-8 max-w-md mx-auto text-left">
+            <h4 class="font-poppins font-bold text-xs uppercase tracking-wider text-gray-600 mb-2.5">
+                Search our Book & Blog Catalog
+            </h4>
+            <form action="/search" method="GET" class="flex border border-gray-300 bg-white overflow-hidden sharp-border">
+                <input type="text" name="q" placeholder="Type keywords (e.g., Fasihi, CBC, Poetry)..." class="w-full px-3 py-2 text-xs outline-none text-gray-700 bg-white">
+                <button type="submit" class="bg-magenta hover:bg-darkmagenta text-white px-5 transition-colors text-xs font-bold uppercase">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
+            <a href="/" class="w-full sm:w-auto bg-magenta hover:bg-darkmagenta text-white font-bold py-3 px-6 text-xs uppercase tracking-wider sharp-border shadow-md hover-translate">
+                <i class="fas fa-home mr-1.5"></i> Return Home
+            </a>
+            <a href="/" class="w-full sm:w-auto bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold py-3 px-6 text-xs uppercase tracking-wider border border-gray-200 sharp-border hover-translate">
+                <i class="far fa-newspaper mr-1.5"></i> Read Blog Zone
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
