@@ -13,6 +13,8 @@
     <!-- Robots -->
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
+    
+    {% block meta %}
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
@@ -29,6 +31,8 @@
     <meta name="twitter:title" content="{% block twitter_title %}TUNU Publishers | Elimu ni Tunu{% endblock %}">
     <meta name="twitter:description" content="{% block twitter_description %}Discover premium CBC learning materials, junior school text static, and local story treasures with TUNU Publishers.{% endblock %}">
     <meta name="twitter:image" content="https://blog.tunupublishers.com/static/logos/logo.png">
+
+    {% endblock %}
 
     <!-- Favicons -->
     <link rel="icon" type="image/png" href="/static/logos/icon.png">
