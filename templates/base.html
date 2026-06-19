@@ -7,21 +7,67 @@
         {% block title %}TUNU Publishers | Elimu ni Tunu{% endblock %}
     </title>
     
-    <!-- Meta tags for generic SEO with block overrides -->
-    {% block meta %}
-    <meta name="title" content="TUNU Publishers | Elimu ni Tunu">
-    <meta name="description" content="Discover premium CBC learning materials, junior school text resources, and local story treasures with TUNU Publishers.">
-    <meta name="keywords" content="TUNU Publishers, CBC textbooks Kenya, Revision guides Nairobi, Elimu ni Tunu">
-    {% endblock %}
-    
-    <meta name="author" content="TUNU Publishers">
-    <meta name="theme-color" content="#8B008B">
+<!-- Canonical -->
+    <link rel="canonical" href="https://blog.tunupublishers.com{{ request.path if request else '' }}">
+
+    <!-- Robots -->
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TUNU Publishers Blog">
+    <meta property="og:title" content="{% block og_title %}TUNU Publishers | Elimu ni Tunu{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Discover premium CBC learning materials, junior school text static, and local story treasures with TUNU Publishers.{% endblock %}">
+    <meta property="og:url" content="https://blog.tunupublishers.com{{ request.path if request else '' }}">
+    <meta property="og:image" content="https://blog.tunupublishers.com/static/logos/icon.png">
+    <meta property="og:image:alt" content="TUNU Publishers Logo">
+    <meta property="og:locale" content="en_KE">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}TUNU Publishers | Elimu ni Tunu{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Discover premium CBC learning materials, junior school text static, and local story treasures with TUNU Publishers.{% endblock %}">
+    <meta name="twitter:image" content="https://blog.tunupublishers.com/static/logos/logo.png">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="/static/logos/icon.png">
+    <link rel="apple-touch-icon" href="/static/logos/icon.png">
+
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "TUNU Publishers",
+        "url": "https://tunupublishers.com",
+        "logo": "https://blog.tunupublishers.com/static/logos/icon.png",
+        "sameAs": [
+            "https://tunupublishers.com"
+        ]
+    }
+    </script>
+
+    <!-- Website Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "TUNU Publishers Blog",
+        "url": "https://blog.tunupublishers.com",
+        "publisher": {
+            "@type": "Organization",
+            "name": "TUNU Publishers"
+        }
+    }
+    </script>
 
     <!-- Fonts and Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
