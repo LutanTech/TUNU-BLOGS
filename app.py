@@ -185,4 +185,4 @@ def search():
     return render_template('search.html', posts=posts, q=q)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    print("app.run(debug=True)")
